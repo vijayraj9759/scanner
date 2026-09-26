@@ -6,14 +6,18 @@ const windowHeight = 800;
 
 let directionOffset = 1;
 
-const scannerRange = 50;
-let scannerStart = 0;
+const detectorRange = 50;
+let detectorStart = 0;
 
 const particleRange = 100;
-const particleStart = 200;
+const particleStart = 100;
 
 function createObject(start, range, color) {
   r.DrawRectangle(start, 0, range, windowHeight, color);
+}
+
+function chooseColor() {
+  return geometry.isOverlapping(detectorStart, detectorStart + detectorRange, particleStart, particleStart + particleRange) ? r.RED : r.WHITE;
 }
 
 function setup() {
@@ -24,8 +28,8 @@ function setup() {
 }
 
 function update() {
-  scannerStart = scannerStart + directionOffset;
-  directionOffset = geometry.isEdge(scannerStart, scannerRange, windowWidth) ? -directionOffset : directionOffset;
+  detectorStart = detectorStart + directionOffset;
+  directionOffset = geometry.isEdge(detectorStart, detectorRange, windowWidth) ? -directionOffset : directionOffset;
 }
 
 
@@ -33,8 +37,10 @@ function draw() {
   r.BeginDrawing();
   r.ClearBackground(r.BLACK);
 
+  const detectorColor = chooseColor();
+
   createObject(particleStart, particleRange, r.SKYBLUE);
-  createObject(scannerStart, scannerRange, r.WHITE);
+  createObject(detectorStart, detectorRange, detectorColor);
 
   r.EndDrawing();
 }

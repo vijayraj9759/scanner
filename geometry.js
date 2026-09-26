@@ -6,6 +6,14 @@ function isEdge(currentPos, width, edgePoint) {
   return false;
 }
 
+function isOverlapping(rangeOneSt, rangeOneEnd, rangeTwoSt, rangeTwoEnd) {
+  if (rangeOneEnd < rangeTwoSt) return false;
+  if (rangeTwoEnd < rangeOneSt) return false;
+
+  return true;
+}
+
 module.exports = {
   isEdge,
+  isOverlapping,
 }
