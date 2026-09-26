@@ -13,7 +13,17 @@ function isOverlapping(rangeOneSt, rangeOneEnd, rangeTwoSt, rangeTwoEnd) {
   return true;
 }
 
+function getRangeEnd(start, range) {
+  return start + range;
+}
+
+function directionOfOffset(st, range, startEdgePoint, endEdgePoint, currentOffset) {
+  return isEdge(st, range, startEdgePoint, endEdgePoint) ? -currentOffset : currentOffset;
+}
+
 module.exports = {
   isEdge,
   isOverlapping,
+  getRangeEnd,
+  directionOfOffset,
 }
