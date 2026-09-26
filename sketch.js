@@ -9,6 +9,9 @@ let directionOffset = 1;
 const scannerRange = 50;
 let scannerStart = 0;
 
+const particleRange = 100;
+const particleStart = 200;
+
 function createObject(start, range, color) {
   r.DrawRectangle(start, 0, range, windowHeight, color);
 }
@@ -20,7 +23,6 @@ function setup() {
   r.SetTargetFPS(FPS);
 }
 
-
 function update() {
   scannerStart = scannerStart + directionOffset;
   directionOffset = geometry.isEdge(scannerStart, scannerRange, windowWidth) ? -directionOffset : directionOffset;
@@ -31,6 +33,7 @@ function draw() {
   r.BeginDrawing();
   r.ClearBackground(r.BLACK);
 
+  createObject(particleStart, particleRange, r.SKYBLUE);
   createObject(scannerStart, scannerRange, r.WHITE);
 
   r.EndDrawing();
