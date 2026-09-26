@@ -6,18 +6,23 @@ const windowHeight = 800;
 
 let directionOffset = 1;
 
+let detectorSt = 0;
 const detectorRange = 50;
-let detectorStart = 0;
-
-const particleRange = 100;
-const particleStart = 100;
 
 function createObject(start, range, color) {
   r.DrawRectangle(start, 0, range, windowHeight, color);
 }
 
-function chooseColor() {
-  return geometry.isOverlapping(detectorStart, detectorStart + detectorRange, particleStart, particleStart + particleRange) ? r.RED : r.WHITE;
+function chooseColor(particleA_st, particleA_range, particleB_st, particleB_range) {
+  const detectorEnd = detectorSt + detectorRange;
+
+  const particleA_end = particleA_st + particleA_range;
+  const particleB_end = particleB_st + particleB_range;
+
+  const isOverlappingA = geometry.isOverlapping(detectorSt, detectorEnd, particleA_st, particleA_end);
+  const isOverlappingB = geometry.isOverlapping(detectorSt, detectorEnd, particleB_st, particleB_end);
+
+  return (isOverlappingA || isOverlappingB) ? r.RED : r.WHITE;
 }
 
 function setup() {
@@ -28,8 +33,8 @@ function setup() {
 }
 
 function update() {
-  detectorStart = detectorStart + directionOffset;
-  directionOffset = geometry.isEdge(detectorStart, detectorRange, windowWidth) ? -directionOffset : directionOffset;
+  detectorSt = detectorSt + directionOffset;
+  directionOffset = geometry.isEdge(detectorSt, detectorRange, windowWidth) ? -directionOffset : directionOffset;
 }
 
 
@@ -37,10 +42,17 @@ function draw() {
   r.BeginDrawing();
   r.ClearBackground(r.BLACK);
 
-  const detectorColor = chooseColor();
+  const particleA_st = 100;
+  const particleA_range = 100;
 
-  createObject(particleStart, particleRange, r.SKYBLUE);
-  createObject(detectorStart, detectorRange, detectorColor);
+  const particleB_st = 400;
+  const particleB_range = 200;
+
+  const detectorColor = chooseColor(particleA_st, particleA_range, particleB_st, particleB_range);
+
+  createObject(particleA_st, particleA_range, r.SKYBLUE);
+  createObject(particleB_st, particleB_range, r.SKYBLUE);
+  createObject(detectorSt, detectorRange, detectorColor);
 
   r.EndDrawing();
 }
