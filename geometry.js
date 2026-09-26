@@ -1,7 +1,7 @@
-function isEdge(currentPos, width, edgePoint) {
-  if (currentPos === 0) return true;
+function isEdge(currentPos, width, startEdgePoint, endEdgePoint) {
+  if (currentPos <= startEdgePoint) return true;
 
-  if (currentPos + width === edgePoint) return true;
+  if (currentPos + width >= endEdgePoint) return true;
 
   return false;
 }

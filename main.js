@@ -1,6 +1,4 @@
-const geometry = require("./geometry.js");
 const sketch = require("./sketch.js");
-
 
 function loop() {
 
