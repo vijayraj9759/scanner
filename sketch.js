@@ -34,10 +34,19 @@ function update() {
   dC.hasDetected = isOverlap(dC.y, dC.height, p.particleC_y, p.particleC_height);
 }
 
+function drawRangeH(x, width, color) {
+  r.DrawRectangle(x, 0, width, r.GetScreenHeight(), color);
+}
+
+function drawRangeV(y, height, color) {
+  r.DrawRectangle(0, y, r.GetScreenHeight(), height, color);
+}
+
 function draw() {
   r.BeginDrawing();
   r.ClearBackground(r.BLACK);
 
+  // drawRangeH(p.particleA_x, p.particleA_width, r,r.SKYBLUE);
   r.DrawRectangle(p.particleA_x, 0, p.particleA_width, 800, r.SKYBLUE);
   r.DrawRectangle(p.particleB_x, 0, p.particleB_width, 800, r.SKYBLUE);
   r.DrawRectangle(0, p.particleC_y, 1000, p.particleC_height, r.SKYBLUE);
