@@ -54,7 +54,7 @@ function draw() {
 
   r.DrawRectangle(dA.x, 0, dA.width, 800, d.chooseColor(dA.hasDetected));
   r.DrawRectangle(dB.x, 0, dB.width, 800, d.chooseColor(dB.hasDetected));
-  // r.DrawRectangle(0, detectorC_x, WIDTH, detectorC_width, detectorC_color);
+  r.DrawRectangle(0, detectorC_x, 1000, detectorC_width, detectorC_color);
 
   r.EndDrawing();
 }
