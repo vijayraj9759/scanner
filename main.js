@@ -10,8 +10,10 @@ function loop() {
 }
 
 function main() {
+  const WIDTH = 1000;
+  const HEIGHT = 800;
 
-  sketch.setup();
+  sketch.setup(WIDTH, HEIGHT);
   loop();
   sketch.teardown();
 

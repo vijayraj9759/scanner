@@ -1,40 +1,86 @@
 const r = require("raylib");
-const geometry = require("./geometry.js");
+const dA = require("./detectorA.js");
 
-const windowWidth = 1000;
-const windowHeight = 800;
+const detectorB_width = 30;
+let detectorB_x;
+let velocityB = 3;
+let detectorB_lower;
+let detectorB_upper;
+let detectorB_hasDetected = false;
 
-const halfWindowWidth = windowWidth / 2;
+const detectorC_width = 30;
+let detectorC_x;
+let velocityC = 4;
+let detectorC_lower;
+let detectorC_upper;
+let detectorC_hasDetected = false;
 
-let speedA_offset = 1;
-let speedB_offset = 3;
-let speedC_offset = 4;
+const particleA_x = 100;
+const particleA_width = 100;
 
-let detectorA_st = 0;
-const detectorA_range = 50;
+const particleB_x = 400;
+const particleB_width = 200;
 
-let detectorB_st = halfWindowWidth;
-const detectorB_range = 30;
+const particleC_x = 0;
+const particleC_width = 100;
 
-let detectorC_st = 0;
-const detectorC_range = 30;
-
-function setup() {
+function setup(WIDTH, HEIGHT) {
   const FPS = 60;
 
-  r.InitWindow(windowWidth, windowHeight, "Scanner");
+  r.InitWindow(WIDTH, HEIGHT, "Scanner");
   r.SetTargetFPS(FPS);
+
+  dA.x = 0;
+  dA.lower = 0;
+  dA.upper = WIDTH / 2;
+
+  detectorB_x = WIDTH / 2;
+  detectorB_lower = WIDTH / 2;
+  detectorB_upper = WIDTH;
+
+}
+
+function isDetectorOutOfBounds(st, width, lower, upper) {
+  const end = st + width;
+
+  return (st < lower) || (end > upper);
+}
+
+function calculateDetectorVelocity(st, width, lower, upper, velocity) {
+  return isDetectorOutOfBounds(st, width, lower, upper) ? -velocity : velocity;
+}
+
+function calculateDetectorPosition(x, velocity) {
+  return x + velocity;
+}
+
+function overlapFields(st, width) {
+  return (
+    isOverlap(st, width, particleA_x, particleA_width) ||
+    isOverlap(st, width, particleB_x, particleB_width)
+  )
+}
+
+function isOverlap(st1, width1, st2, width2) {
+  const end1 = st1 + width1;
+  const end2 = st2 + width2;
+
+  return !((end1 < st2) || (st1 > end2));
 }
 
 function update() {
-  detectorA_st = detectorA_st + speedA_offset;
-  speedA_offset = geometry.directionOfOffset(detectorA_st, detectorA_range, 0, halfWindowWidth, speedA_offset);
+  dA.velocity = calculateDetectorVelocity(dA.x, dA.width, dA.lower, dA.upper, dA.velocity);
+  dA.x = calculateDetectorPosition(dA.x, dA.velocity);
 
-  detectorB_st = detectorB_st + speedB_offset;
-  speedB_offset = geometry.directionOfOffset(detectorB_st, detectorB_range, halfWindowWidth, windowWidth, speedB_offset);
+  velocityB = calculateDetectorVelocity(detectorB_x, detectorB_width, detectorB_lower, detectorB_upper, velocityB);
+  detectorB_x = calculateDetectorPosition(detectorB_x, velocityB);
 
-  detectorC_st = detectorC_st + speedC_offset;
-  speedC_offset = geometry.directionOfOffset(detectorC_st, detectorC_range, 0, windowHeight, speedC_offset);
+  dA.hasDetected = overlapFields(dA.x, dA.width);
+  detectorB_hasDetected = overlapFields(detectorB_x, detectorB_width);
+}
+
+function chooseColor(hasDetected) {
+  return hasDetected ? r.ColorAlpha(r.RED, 0.7) : r.WHITE;
 }
 
 
@@ -42,37 +88,13 @@ function draw() {
   r.BeginDrawing();
   r.ClearBackground(r.BLACK);
 
-  const detectorA_end = geometry.getRangeEnd(detectorA_st, detectorA_range);
-  const detectorB_end = geometry.getRangeEnd(detectorB_st, detectorB_range);
-  const detectorC_end = geometry.getRangeEnd(detectorC_st, detectorC_range);
+  r.DrawRectangle(particleA_x, 0, particleA_width, 800, r.SKYBLUE);
+  r.DrawRectangle(particleB_x, 0, particleB_width, 800, r.SKYBLUE);
+  // r.DrawRectangle(0, particleC_x, WIDTH, particleC_width, r.SKYBLUE);
 
-  const particleA_st = 100;
-  const particleA_range = 100;
-  const particleA_end = geometry.getRangeEnd(particleA_st, particleA_range);
-
-  const particleB_st = 400;
-  const particleB_range = 200;
-  const particleB_end = geometry.getRangeEnd(particleB_st, particleB_range);
-
-  const particleC_st = 0;
-  const particleC_range = 100;
-  const particleC_end = geometry.getRangeEnd(particleC_st, particleC_range);
-
-  const detectorA_Overlap = geometry.isOverlapping(detectorA_st, detectorA_end, particleA_st, particleA_end) || geometry.isOverlapping(detectorA_st, detectorA_end, particleB_st, particleB_end);
-  const detectorB_Overlap = geometry.isOverlapping(detectorB_st, detectorB_end, particleA_st, particleA_end) || geometry.isOverlapping(detectorB_st, detectorB_end, particleB_st, particleB_end);
-  const detectorC_Overlap = geometry.isOverlapping(detectorC_st, detectorC_end, particleC_st, particleC_end);
-
-  const detectorA_color = detectorA_Overlap ? r.RED : r.WHITE;
-  const detectorB_color = detectorB_Overlap ? r.RED : r.WHITE;
-  const detectorC_color = detectorC_Overlap ? r.RED : r.WHITE;
-
-  r.DrawRectangle(particleA_st, 0, particleA_range, windowHeight, r.SKYBLUE);
-  r.DrawRectangle(particleB_st, 0, particleB_range, windowHeight, r.SKYBLUE);
-  r.DrawRectangle(0, particleC_st, windowWidth, particleC_range, r.SKYBLUE);
-
-  r.DrawRectangle(detectorA_st, 0, detectorA_range, windowHeight, detectorA_color);
-  r.DrawRectangle(detectorB_st, 0, detectorB_range, windowHeight, detectorB_color);
-  r.DrawRectangle(0, detectorC_st, windowWidth, detectorC_range, detectorC_color);
+  r.DrawRectangle(dA.x, 0, dA.width, 800, chooseColor(dA.hasDetected));
+  r.DrawRectangle(detectorB_x, 0, detectorB_width, 800, chooseColor(detectorB_hasDetected));
+  // r.DrawRectangle(0, detectorC_x, WIDTH, detectorC_width, detectorC_color);
 
   r.EndDrawing();
 }
