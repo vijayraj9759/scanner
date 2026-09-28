@@ -5,92 +5,112 @@ const dB = require("./detectorB.js");
 const dC = require("./detectorC.js");
 const p = require("./particles.js");
 
-function overlapFields(st, width) {
-  return (
-    isOverlap(st, width, p.particleA_x, p.particleA_width) ||
-    isOverlap(st, width, p.particleB_x, p.particleB_width)
-  )
+function isOverlapping(r1Start, r1Width, r2Start, r2Width) {
+    const r1End = r1Start + r1Width;
+    const r2End = r2Start + r2Width;
+
+    return !(r1End < r2Start || r1Start > r2End);
 }
 
-function isOverlap(st1, width1, st2, width2) {
-  const end1 = st1 + width1;
-  const end2 = st2 + width2;
-
-  return !((end1 < st2) || (st1 > end2));
+function isOverlappingWithAnyFields(st, width) {
+    return (
+        isOverlapping(st, width, p.particleA_x, p.particleA_width) ||
+        isOverlapping(st, width, p.particleB_x, p.particleB_width)
+    );
 }
 
 function update() {
-  dA.velocity = d.calculateVelocity(dA.x, dA.width, dA.lower, dA.upper, dA.velocity);
-  dA.x = d.calculatePosition(dA.x, dA.velocity);
+    dA.velocity = d.calculateVelocity(
+        dA.x,
+        dA.width,
+        dA.lower,
+        dA.upper,
+        dA.velocity,
+    );
+    dA.x = d.calculatePosition(dA.x, dA.velocity);
+    dA.hasDetected = isOverlappingWithAnyFields(dA.x, dA.width);
 
-  dB.velocity = d.calculateVelocity(dB.x, dB.width, dB.lower, dB.upper, dB.velocity);
-  dB.x = d.calculatePosition(dB.x, dB.velocity);
+    dB.velocity = d.calculateVelocity(
+        dB.x,
+        dB.width,
+        dB.lower,
+        dB.upper,
+        dB.velocity,
+    );
+    dB.x = d.calculatePosition(dB.x, dB.velocity);
+    dB.hasDetected = isOverlappingWithAnyFields(dB.x, dB.width);
 
-  dC.velocity = d.calculateVelocity(dC.y, dC.height, dC.lower, dC.upper, dC.velocity);
-  dC.y = d.calculatePosition(dC.y, dC.velocity);
-
-  dA.hasDetected = overlapFields(dA.x, dA.width);
-  dB.hasDetected = overlapFields(dB.x, dB.width);
-  dC.hasDetected = isOverlap(dC.y, dC.height, p.particleC_y, p.particleC_height);
+    dC.velocity = d.calculateVelocity(
+        dC.y,
+        dC.height,
+        dC.lower,
+        dC.upper,
+        dC.velocity,
+    );
+    dC.y = d.calculatePosition(dC.y, dC.velocity);
+    dC.hasDetected = isOverlapping(
+        dC.y,
+        dC.height,
+        p.particleC_y,
+        p.particleC_height,
+    );
 }
 
-function drawRangeH(x, width, color) {
-  r.DrawRectangle(x, 0, width, r.GetScreenHeight(), color);
+function drawHorizontalRange(x, width, color) {
+    r.DrawRectangle(x, 0, width, r.GetScreenHeight(), color);
 }
 
-function drawRangeV(y, height, color) {
-  r.DrawRectangle(0, y, r.GetScreenHeight(), height, color);
+function drawVerticalRange(y, height, color) {
+    r.DrawRectangle(0, y, r.GetScreenWidth(), height, color);
 }
 
 function draw() {
-  r.BeginDrawing();
-  r.ClearBackground(r.BLACK);
+    r.BeginDrawing();
+    r.ClearBackground(r.BLACK);
 
-  // drawRangeH(p.particleA_x, p.particleA_width, r,r.SKYBLUE);
-  r.DrawRectangle(p.particleA_x, 0, p.particleA_width, 800, r.SKYBLUE);
-  r.DrawRectangle(p.particleB_x, 0, p.particleB_width, 800, r.SKYBLUE);
-  r.DrawRectangle(0, p.particleC_y, 1000, p.particleC_height, r.SKYBLUE);
+    drawHorizontalRange(p.particleA_x, p.particleA_width, r.SKYBLUE);
+    drawHorizontalRange(p.particleB_x, p.particleB_width, r.SKYBLUE);
+    drawVerticalRange(p.particleC_y, p.particleC_height, r.SKYBLUE);
 
-  r.DrawRectangle(dA.x, 0, dA.width, r.GetScreenWidth(), d.chooseColor(dA.hasDetected));
-  r.DrawRectangle(dB.x, 0, dB.width, r.GetScreenHeight(), d.chooseColor(dB.hasDetected));
-  r.DrawRectangle(0, dC.y, r.GetScreenWidth(), dC.height, d.chooseColor(dC.hasDetected));
+    drawHorizontalRange(dA.x, dA.width, d.chooseColor(dA.hasDetected));
+    drawHorizontalRange(dB.x, dB.width, d.chooseColor(dB.hasDetected));
+    drawVerticalRange(dC.y, dC.height, d.chooseColor(dC.hasDetected));
 
-  r.EndDrawing();
+    r.EndDrawing();
 }
 
-function setup(WIDTH, HEIGHT) {
-  r.SetTraceLogLevel(r.LOG_NONE);
-  const FPS = 60;
+function setup(width, height) {
+    r.SetTraceLogLevel(r.LOG_NONE);
+    const FPS = 60;
 
-  r.InitWindow(WIDTH, HEIGHT, "Scanner");
-  r.SetTargetFPS(FPS);
+    r.InitWindow(width, height, "Scanner");
+    r.SetTargetFPS(FPS);
 
-  dA.x = 0;
-  dA.lower = 0;
-  dA.upper = WIDTH / 2;
+    dA.x = 0;
+    dA.lower = 0;
+    dA.upper = width / 2;
 
-  dB.x = WIDTH / 2;
-  dB.lower = WIDTH / 2;
-  dB.upper = WIDTH;
+    dB.x = width / 2;
+    dB.lower = width / 2;
+    dB.upper = width;
 
-  dC.y = 0;
-  dC.lower = 0;
-  dC.upper = HEIGHT;
-
+    dC.y = 0;
+    dC.lower = 0;
+    dC.upper = height;
 }
 
 function running() {
-  return !r.WindowShouldClose();
+    return !r.WindowShouldClose();
 }
 
 function teardown() {
-  r.CloseWindow();
+    r.CloseWindow();
 }
 
 module.exports = {
-  setup,
-  update,
-  draw,
-  running,
-  teardown,
+    setup,
+    update,
+    draw,
+    running,
+    teardown,
 };

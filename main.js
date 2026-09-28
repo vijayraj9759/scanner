@@ -1,12 +1,10 @@
 const sketch = require("./sketch.js");
 
 function loop() {
-
   while (sketch.running()) {
     sketch.update();
     sketch.draw();
   }
-
 }
 
 function main() {
@@ -16,7 +14,6 @@ function main() {
   sketch.setup(WIDTH, HEIGHT);
   loop();
   sketch.teardown();
-
 }
 
 main();
