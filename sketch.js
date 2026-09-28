@@ -12,10 +12,10 @@ function isOverlapping(r1Start, r1Width, r2Start, r2Width) {
     return !(r1End < r2Start || r1Start > r2End);
 }
 
-function isOverlappingWithAnyFields(st, width) {
+function isOverlappingWithAnyFields(dtStart, dtWidth) {
     return (
-        isOverlapping(st, width, p.particleA_x, p.particleA_width) ||
-        isOverlapping(st, width, p.particleB_x, p.particleB_width)
+        isOverlapping(dtStart, dtWidth, p.particleA_x, p.particleA_width) ||
+        isOverlapping(dtStart, dtWidth, p.particleB_x, p.particleB_width)
     );
 }
 
