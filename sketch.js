@@ -1,4 +1,5 @@
 const r = require("raylib");
+const d = require("./detector.js");
 const dA = require("./detectorA.js");
 const dB = require("./detectorB.js");
 
@@ -18,36 +19,6 @@ const particleB_width = 200;
 const particleC_x = 0;
 const particleC_width = 100;
 
-function setup(WIDTH, HEIGHT) {
-  const FPS = 60;
-
-  r.InitWindow(WIDTH, HEIGHT, "Scanner");
-  r.SetTargetFPS(FPS);
-
-  dA.x = 0;
-  dA.lower = 0;
-  dA.upper = WIDTH / 2;
-
-  dB.x = WIDTH / 2;
-  dB.lower = WIDTH / 2;
-  dB.upper = WIDTH;
-
-}
-
-function isDetectorOutOfBounds(st, width, lower, upper) {
-  const end = st + width;
-
-  return (st < lower) || (end > upper);
-}
-
-function calculateDetectorVelocity(st, width, lower, upper, velocity) {
-  return isDetectorOutOfBounds(st, width, lower, upper) ? -velocity : velocity;
-}
-
-function calculateDetectorPosition(x, velocity) {
-  return x + velocity;
-}
-
 function overlapFields(st, width) {
   return (
     isOverlap(st, width, particleA_x, particleA_width) ||
@@ -63,20 +34,15 @@ function isOverlap(st1, width1, st2, width2) {
 }
 
 function update() {
-  dA.velocity = calculateDetectorVelocity(dA.x, dA.width, dA.lower, dA.upper, dA.velocity);
-  dA.x = calculateDetectorPosition(dA.x, dA.velocity);
+  dA.velocity = d.calculateVelocity(dA.x, dA.width, dA.lower, dA.upper, dA.velocity);
+  dA.x = d.calculatePosition(dA.x, dA.velocity);
 
-  dB.velocity = calculateDetectorVelocity(dB.x, dB.width, dB.lower, dB.upper, dB.velocity);
-  dB.x = calculateDetectorPosition(dB.x, dB.velocity);
+  dB.velocity = d.calculateVelocity(dB.x, dB.width, dB.lower, dB.upper, dB.velocity);
+  dB.x = d.calculatePosition(dB.x, dB.velocity);
 
   dA.hasDetected = overlapFields(dA.x, dA.width);
   dB.hasDetected = overlapFields(dB.x, dB.width);
 }
-
-function chooseColor(hasDetected) {
-  return hasDetected ? r.ColorAlpha(r.RED, 0.7) : r.WHITE;
-}
-
 
 function draw() {
   r.BeginDrawing();
@@ -86,11 +52,27 @@ function draw() {
   r.DrawRectangle(particleB_x, 0, particleB_width, 800, r.SKYBLUE);
   // r.DrawRectangle(0, particleC_x, WIDTH, particleC_width, r.SKYBLUE);
 
-  r.DrawRectangle(dA.x, 0, dA.width, 800, chooseColor(dA.hasDetected));
-  r.DrawRectangle(dB.x, 0, dB.width, 800, chooseColor(dB.hasDetected));
+  r.DrawRectangle(dA.x, 0, dA.width, 800, d.chooseColor(dA.hasDetected));
+  r.DrawRectangle(dB.x, 0, dB.width, 800, d.chooseColor(dB.hasDetected));
   // r.DrawRectangle(0, detectorC_x, WIDTH, detectorC_width, detectorC_color);
 
   r.EndDrawing();
+}
+
+function setup(WIDTH, HEIGHT) {
+  const FPS = 60;
+
+  r.InitWindow(WIDTH, HEIGHT, "Scanner");
+  r.SetTargetFPS(FPS);
+
+  dA.x = 0;
+  dA.lower = 0;
+  dA.upper = WIDTH / 2;
+
+  dB.x = WIDTH / 2;
+  dB.lower = WIDTH / 2;
+  dB.upper = WIDTH;
+
 }
 
 function running() {
