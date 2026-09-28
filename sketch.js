@@ -1,12 +1,6 @@
 const r = require("raylib");
 const dA = require("./detectorA.js");
-
-const detectorB_width = 30;
-let detectorB_x;
-let velocityB = 3;
-let detectorB_lower;
-let detectorB_upper;
-let detectorB_hasDetected = false;
+const dB = require("./detectorB.js");
 
 const detectorC_width = 30;
 let detectorC_x;
@@ -34,9 +28,9 @@ function setup(WIDTH, HEIGHT) {
   dA.lower = 0;
   dA.upper = WIDTH / 2;
 
-  detectorB_x = WIDTH / 2;
-  detectorB_lower = WIDTH / 2;
-  detectorB_upper = WIDTH;
+  dB.x = WIDTH / 2;
+  dB.lower = WIDTH / 2;
+  dB.upper = WIDTH;
 
 }
 
@@ -72,11 +66,11 @@ function update() {
   dA.velocity = calculateDetectorVelocity(dA.x, dA.width, dA.lower, dA.upper, dA.velocity);
   dA.x = calculateDetectorPosition(dA.x, dA.velocity);
 
-  velocityB = calculateDetectorVelocity(detectorB_x, detectorB_width, detectorB_lower, detectorB_upper, velocityB);
-  detectorB_x = calculateDetectorPosition(detectorB_x, velocityB);
+  dB.velocity = calculateDetectorVelocity(dB.x, dB.width, dB.lower, dB.upper, dB.velocity);
+  dB.x = calculateDetectorPosition(dB.x, dB.velocity);
 
   dA.hasDetected = overlapFields(dA.x, dA.width);
-  detectorB_hasDetected = overlapFields(detectorB_x, detectorB_width);
+  dB.hasDetected = overlapFields(dB.x, dB.width);
 }
 
 function chooseColor(hasDetected) {
@@ -93,7 +87,7 @@ function draw() {
   // r.DrawRectangle(0, particleC_x, WIDTH, particleC_width, r.SKYBLUE);
 
   r.DrawRectangle(dA.x, 0, dA.width, 800, chooseColor(dA.hasDetected));
-  r.DrawRectangle(detectorB_x, 0, detectorB_width, 800, chooseColor(detectorB_hasDetected));
+  r.DrawRectangle(dB.x, 0, dB.width, 800, chooseColor(dB.hasDetected));
   // r.DrawRectangle(0, detectorC_x, WIDTH, detectorC_width, detectorC_color);
 
   r.EndDrawing();
