@@ -3,20 +3,12 @@ const d = require("./detector.js");
 const dA = require("./detectorA.js");
 const dB = require("./detectorB.js");
 const dC = require("./detectorC.js");
-
-const particleA_x = 100;
-const particleA_width = 100;
-
-const particleB_x = 400;
-const particleB_width = 200;
-
-const particleC_y = 200;
-const particleC_height = 100;
+const p = require("./particles.js");
 
 function overlapFields(st, width) {
   return (
-    isOverlap(st, width, particleA_x, particleA_width) ||
-    isOverlap(st, width, particleB_x, particleB_width)
+    isOverlap(st, width, p.particleA_x, p.particleA_width) ||
+    isOverlap(st, width, p.particleB_x, p.particleB_width)
   )
 }
 
@@ -39,20 +31,20 @@ function update() {
 
   dA.hasDetected = overlapFields(dA.x, dA.width);
   dB.hasDetected = overlapFields(dB.x, dB.width);
-  dC.hasDetected = isOverlap(dC.y, dC.height, particleC_y, particleC_height);
+  dC.hasDetected = isOverlap(dC.y, dC.height, p.particleC_y, p.particleC_height);
 }
 
 function draw() {
   r.BeginDrawing();
   r.ClearBackground(r.BLACK);
 
-  r.DrawRectangle(particleA_x, 0, particleA_width, 800, r.SKYBLUE);
-  r.DrawRectangle(particleB_x, 0, particleB_width, 800, r.SKYBLUE);
-  r.DrawRectangle(0, particleC_y, 1000, particleC_height, r.SKYBLUE);
+  r.DrawRectangle(p.particleA_x, 0, p.particleA_width, 800, r.SKYBLUE);
+  r.DrawRectangle(p.particleB_x, 0, p.particleB_width, 800, r.SKYBLUE);
+  r.DrawRectangle(0, p.particleC_y, 1000, p.particleC_height, r.SKYBLUE);
 
-  r.DrawRectangle(dA.x, 0, dA.width, 800, d.chooseColor(dA.hasDetected));
-  r.DrawRectangle(dB.x, 0, dB.width, 800, d.chooseColor(dB.hasDetected));
-  r.DrawRectangle(0, dC.y, 1000, dC.height, d.chooseColor(dC.hasDetected));
+  r.DrawRectangle(dA.x, 0, dA.width, r.GetScreenWidth(), d.chooseColor(dA.hasDetected));
+  r.DrawRectangle(dB.x, 0, dB.width, r.GetScreenHeight(), d.chooseColor(dB.hasDetected));
+  r.DrawRectangle(0, dC.y, r.GetScreenWidth(), dC.height, d.chooseColor(dC.hasDetected));
 
   r.EndDrawing();
 }
