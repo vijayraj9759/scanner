@@ -1,15 +1,19 @@
-const height = 30;
+let width;
+let height;
+let x;
 let y;
-let velocity = 4;
-let lower;
-let upper;
-let hasDetected = false;
+let velocity = 2;
+let lowerBound;
+let upperBound;
+let hasDetected;
 
-module.exports = {
-  height,
-  y,
-  velocity,
-  lower,
-  upper,
-  hasDetected,
-}
+return (module.exports = {
+    width,
+    height,
+    x,
+    y,
+    velocity,
+    lowerBound,
+    upperBound,
+    hasDetected,
+});

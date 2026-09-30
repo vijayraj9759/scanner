@@ -1,11 +1,19 @@
-const width = 50;
+let width;
+let height;
 let x;
-let velocity = 1;
-let lower;
-let upper;
+let y;
+let velocity = 3;
+let lowerBound;
+let upperBound;
 let hasDetected;
 
-
-return module.exports = {
-  width, x, velocity, lower, upper, hasDetected,
-};
+return (module.exports = {
+    width,
+    height,
+    x,
+    y,
+    velocity,
+    lowerBound,
+    upperBound,
+    hasDetected,
+});
