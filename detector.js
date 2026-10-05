@@ -58,7 +58,7 @@ function updateV(d, p1, p2) {
 function updateH(d, p) {
     calculateVelocity(d);
     d.y = updatePosition(d.y, d.velocity);
-    d.hasDetected = range.isOverlapping(d, p);
+    d.hasDetected = range.isOverlapping(d.y, d.height, p.y, p.height);
 
     return d;
 }

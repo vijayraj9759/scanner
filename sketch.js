@@ -31,8 +31,8 @@ function setup(width, height) {
     r.InitWindow(width, height, "Scanner");
     r.SetTargetFPS(FPS);
 
-    let detectorA = d.create(0, 0, 10, height, 0, width / 2, 3, "Vertical");
-    let detectorB = d.create(
+    const detectorA = d.create(0, 0, 10, height, 0, width / 2, 3, "Vertical");
+    const detectorB = d.create(
         width / 2,
         0,
         30,
@@ -42,11 +42,11 @@ function setup(width, height) {
         2,
         "Vertical",
     );
-    let detectorC = d.create(0, 0, width, 20, 0, height, 4, "Horizontal");
+    const detectorC = d.create(0, 0, width, 20, 0, height, 4, "Horizontal");
 
-    let particleA = p.create(100, 0, 100, height);
-    let particleB = p.create(400, 0, 200, height);
-    let particleC = p.create(0, 200, width, 100);
+    const particleA = p.create(100, 0, 100, height);
+    const particleB = p.create(400, 0, 200, height);
+    const particleC = p.create(0, 200, width, 100);
 
     return { detectorA, detectorB, detectorC, particleA, particleB, particleC };
 }
