@@ -1,19 +1,19 @@
 const sketch = require("./sketch.js");
 
-function loop() {
-  while (sketch.running()) {
-    sketch.update();
-    sketch.draw();
-  }
+function loop(world) {
+    while (sketch.running()) {
+        sketch.update(world);
+        sketch.draw(world);
+    }
 }
 
 function main() {
-  const WIDTH = 1000;
-  const HEIGHT = 800;
+    const WIDTH = 1000;
+    const HEIGHT = 800;
 
-  sketch.setup(WIDTH, HEIGHT);
-  loop();
-  sketch.teardown();
+    const world = sketch.setup(WIDTH, HEIGHT);
+    loop(world);
+    sketch.teardown();
 }
 
 main();
