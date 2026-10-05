@@ -13,37 +13,66 @@ function isOverlappingWithAnyFields(d, p1, p2) {
     );
 }
 
-function updatePositionV(d) {
-    d.velocity = range.isOutOfBounds(d.x, d.width, d.lowerBound, d.upperBound)
+function calculateVelocity(d) {
+    const detectorSt = d.orientation === "Horizontal" ? d.y : d.x;
+    const detectorwidth = d.orientation === "Horizontal" ? d.height : d.width;
+
+    d.velocity = range.isOutOfBounds(
+        detectorSt,
+        detectorwidth,
+        d.lowerBound,
+        d.upperBound,
+    )
         ? -d.velocity
         : d.velocity;
-
-    d.x = d.x + d.velocity;
 }
 
-function updatePositionH(d) {
-    d.velocity = range.isOutOfBounds(d.y, d.height, d.lowerBound, d.upperBound)
-        ? -d.velocity
-        : d.velocity;
-
-    d.y = d.y + d.velocity;
+function updatePosition(detectorSt, detectorVelocity) {
+    return detectorSt + detectorVelocity;
 }
+
+// function updatePositionV(d) {
+//     d.velocity = range.isOutOfBounds(d.x, d.width, d.lowerBound, d.upperBound)
+//         ? -d.velocity
+//         : d.velocity;
+
+//     d.x = d.x + d.velocity;
+// }
+
+// function updatePositionH(d) {
+//     d.velocity = range.isOutOfBounds(d.y, d.height, d.lowerBound, d.upperBound)
+//         ? -d.velocity
+//         : d.velocity;
+
+//     d.y = d.y + d.velocity;
+// }
 
 function updateV(d, p1, p2) {
-    updatePositionV(d);
+    calculateVelocity(d);
+    d.x = updatePosition(d.x, d.velocity);
     d.hasDetected = isOverlappingWithAnyFields(d, p1, p2);
 
     return d;
 }
 
 function updateH(d, p) {
-    updatePositionH(d);
-    d.hasDetected = range.isOverlapping(d.y, d.height, p.y, p.height);
+    calculateVelocity(d);
+    d.y = updatePosition(d.y, d.velocity);
+    d.hasDetected = range.isOverlapping(d, p);
 
     return d;
 }
 
-function create(x, y, width, height, lowerBound, upperBound, velocity) {
+function create(
+    x,
+    y,
+    width,
+    height,
+    lowerBound,
+    upperBound,
+    velocity,
+    orientation,
+) {
     const hasDetected = false;
     return {
         x,
@@ -54,6 +83,7 @@ function create(x, y, width, height, lowerBound, upperBound, velocity) {
         upperBound,
         velocity,
         hasDetected,
+        orientation,
     };
 }
 
